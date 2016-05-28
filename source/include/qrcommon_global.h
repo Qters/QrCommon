@@ -1,0 +1,12 @@
+#ifndef QRCOMMON_GLOBAL_H
+#define QRCOMMON_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(QRCOMMON_LIBRARY)
+#  define QRCOMMONSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define QRCOMMONSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // QRCOMMON_GLOBAL_H
