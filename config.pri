@@ -5,8 +5,8 @@ CONFIG(debug, debug|release) {
     unix: TARGET = $$join(TARGET,,,_debug)
     else: TARGET = $$join(TARGET,,,d)
 
-    DESTDIR = $$PWD/../build_debug_qrcommon
+    DESTDIR = $$PWD/../Qters_debug/qrcommon
 }
 CONFIG(release, debug|release) {
-    DESTDIR = $$PWD/../build_qrcommon_release
+    DESTDIR = $$PWD/../Qters_release/qrcommon
 }

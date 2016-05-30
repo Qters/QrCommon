@@ -10,14 +10,14 @@ include($$PWD/../config.pri)
 
 CONFIG(debug, debug|release) {
     LIBS += \
-        -L$$QR_TEST_PRO/../../build_debug_qrtest/ -lQrTestd \
-        -L$$QR_COMMON_PRO/../../build_debug_qrcommon/ -lQrCommond \
+        -L$$QR_TEST_PRO/../../Qters_debug/qrtest/ -lQrTestd \
+        -L$$QR_COMMON_PRO/../../Qters_debug/qrcommon/ -lQrCommond \
 }
 
 CONFIG(release, debug|release) {
     LIBS += \
-        -L$$QR_TEST_PRO/../../build_release_qrtest/ -lQrTest \
-        -L$$QR_COMMON_PRO/../../build_release_qrcommon/ -lQrCommon \
+        -L$$QR_TEST_PRO/../../Qters_release/qrtest/ -lQrTest \
+        -L$$QR_COMMON_PRO/../../Qters_release/qrcommon/ -lQrCommon \
 }
 
 INCLUDEPATH += \
