@@ -5,9 +5,7 @@
 
 #include "qrcommon_global.h"
 
-namespace Qters {
-
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 class QRCOMMONSHARED_EXPORT QrFiler
 {
@@ -16,9 +14,6 @@ public:
     static bool getFileFolder(const QString &filePath, QString *fileFolder, bool autoCreate = true);
 };
 
-}   //  namespace QrCommon
-
-}   //  namespace Qters
-
+NS_QRCOMMON_END
 
 #endif // QRFILER_H

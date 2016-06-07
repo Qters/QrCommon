@@ -6,9 +6,9 @@
 #include <QtCore/qlist.h>
 #include <QtCore/qtextstream.h>
 
-namespace Qters {
+#include "qrcommon_global.h"
 
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 /*!
  *  \brief  convert qt handle to qstring
@@ -51,10 +51,7 @@ public:
     static QVariant asQVariant(T* ptr);
 };
 
-
-}   //  namespace QrCommon
-
-}   //  namespace Qters
+NS_QRCOMMON_END
 
 #include "auxiliary/qrconverter.inl"
 

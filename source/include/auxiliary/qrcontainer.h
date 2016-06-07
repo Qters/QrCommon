@@ -1,12 +1,11 @@
 ﻿#ifndef QRCONTAINER_H
 #define QRCONTAINER_H
 
-
 #include <QtCore/qvector.h>
 
-namespace Qters {
+#include "qrcommon_global.h"
 
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 template <typename T>
 class QrContainerOperate {
@@ -24,9 +23,7 @@ public:
     static void vectorToStringList(const QVector<T>& from, QStringList *to);
 };
 
-}   //  namespace QrCommon
-
-}   //  namespace Qters
+NS_QRCOMMON_END
 
 #include "auxiliary/qrcontainer.inl"
 

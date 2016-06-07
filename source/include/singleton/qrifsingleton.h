@@ -6,9 +6,7 @@
 
 #include "qrcommon_global.h"
 
-namespace Qters {
-
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 class QrSingletonContainer;
 
@@ -34,9 +32,7 @@ private:
     QString key;    //  singleton key
 };
 
-}   //  namespace QrCommon
-
-}   //  namespace Qters
+NS_QRCOMMON_END
 
 #endif // QRIFSINGLETON_H
 

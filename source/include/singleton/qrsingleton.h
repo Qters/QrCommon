@@ -6,11 +6,7 @@
 
 #include "singleton/qrifsingleton.h"
 
-
-
-namespace Qters {
-
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 /*!
  *
@@ -95,10 +91,7 @@ private:
 
 #include "singleton/qrsingleton.inl"
 
-
-}   //  namespace QrCommon
-
-}   //  namespace Qters
+NS_QRCOMMON_END
 
 #endif // QRSINGLETON_H
 

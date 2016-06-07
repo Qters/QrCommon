@@ -4,7 +4,7 @@
 #include <QtCore/qdir.h>
 #include <QtWidgets/qapplication.h>
 
-using namespace Qters::QrCommon;
+USING_NS_QRCOMMON;
 
 bool QrFiler::fileExists(const QString& path)
 {

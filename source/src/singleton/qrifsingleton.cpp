@@ -4,7 +4,7 @@
 
 #include "singleton/qrsingletoncontainer.h"
 
-using namespace Qters::QrCommon;
+USING_NS_QRCOMMON;
 
 QrIfSingleton::QrIfSingleton(const QString &_key)
     :key(_key)

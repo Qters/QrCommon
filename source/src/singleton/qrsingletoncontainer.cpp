@@ -3,7 +3,7 @@
 #include <QtCore/QMutexLocker>
 #include <QtCore/qdebug.h>
 
-using namespace Qters::QrCommon;
+USING_NS_QRCOMMON;
 
 QHash<QString, QrIfSingleton*> QrSingletonContainer::mapSingletonContainer;
 QMutex QrSingletonContainer::mutexSingletonContainer;

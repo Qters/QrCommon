@@ -1,7 +1,9 @@
 ﻿#ifndef QRCONVERT_INL
 #define QRCONVERT_INL
 
-using namespace Qters::QrCommon;
+#include "qrcommon_global.h"
+
+USING_NS_QRCOMMON;
 
 template <typename T>
 T *QrVariantPoniter<T>::asPoniter(QVariant v)

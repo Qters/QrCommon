@@ -4,7 +4,7 @@
 
 #include "auxiliary/qrispointer.h"
 
-using namespace Qters::QrCommon;
+USING_NS_QRCOMMON;
 
 void tst_ispointer::ispointer()
 {

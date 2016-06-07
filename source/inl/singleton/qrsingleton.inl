@@ -3,11 +3,12 @@
 
 #include <QtCore/qmutex.h>
 
-using namespace Qters::QrCommon;
+#include "qrcommon_global.h"
+
+USING_NS_QRCOMMON;
 
 template <typename T> T * QrSingleton<T>::singleton = nullptr;
 template <typename T> QMutex QrSingleton<T>::mutexSingleton;
-
 
 template <typename T>
 QrSingleton<T>::QrSingleton(const QString &sKey) : QrIfSingleton(sKey) {

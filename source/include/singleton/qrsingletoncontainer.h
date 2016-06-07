@@ -7,9 +7,7 @@
 #include "qrcommon_global.h"
 #include "singleton/qrsingleton.h"
 
-namespace Qters {
-
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 /*!
  * \brief singleton object's container, contain all singleton object defined in project,
@@ -35,8 +33,6 @@ private:
     static QHash<QString, QrIfSingleton *> mapSingletonContainer;
 };
 
-}   //  namespace QrCommon
-
-}   //  namespace Qters
+NS_QRCOMMON_END
 
 #endif // QRSINGLETONCONTAINER_H

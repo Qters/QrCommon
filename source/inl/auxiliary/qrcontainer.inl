@@ -6,7 +6,9 @@
 
 #include <algorithm>
 
-using namespace Qters::QrCommon;
+#include "qrcommon_global.h"
+
+USING_NS_QRCOMMON;
 
 template <typename T>
 QVector<T> QrContainerOperate<T>::intersection(const QVector<QVector<T> > &datas)
@@ -43,7 +45,6 @@ QVector<T> QrContainerOperate<T>::intersection(const QVector<QVector<T> > &datas
 
     return result;
 }
-
 
 void QrContianerConverter::vectorToList(const QVector<T> &from, QList<T> *to) {
     to->clear ();

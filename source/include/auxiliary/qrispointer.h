@@ -1,9 +1,9 @@
 ﻿#ifndef QRISPOINTER_H
 #define QRISPOINTER_H
 
-namespace Qters {
+#include "qrcommon_global.h"
 
-namespace QrCommon {
+NS_QRCOMMON_BEGIN
 
 /*!
  *  Demo:
@@ -21,10 +21,7 @@ struct QrIsPointer<T*> {
     static const bool value = true;
 };
 
-}   //  namespace QrCommon
-
-}   //  namespace Qters
-
+NS_QRCOMMON_END
 
 #endif // QRISPOINTER_H
 

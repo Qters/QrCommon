@@ -2,6 +2,6 @@
 
 #include "singleton/qrsingletoncontainer.h"
 
-using namespace Qters::QrCommon;
+USING_NS_QRCOMMON;
 
 TEST_SINGLETON_IMPLEMENT(QrSingletonContainer)
