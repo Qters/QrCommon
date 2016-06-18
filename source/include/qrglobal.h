@@ -11,7 +11,7 @@
 #define QR_DECLARE_PRIVATE(Class) \
     private: \
     Q_DECLARE_PRIVATE(Class) \
-    QSharedPointer<Class##Private> d_ptr; \
+    QSharedPointer<Class##Private> d_ptr;
 
 /*!
  *  Q_DECLARE_PUBLIC and q_ptr
@@ -20,7 +20,7 @@
 #define QR_DECLARE_PUBLIC(Class) \
     private: \
     Q_DECLARE_PUBLIC(Class) \
-    Class* q_ptr; \
+    Class* q_ptr;
 
 #endif // QRGLOBAL
 
