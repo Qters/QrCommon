@@ -43,7 +43,7 @@ NS_QRCOMMON_BEGIN
   */
 #define QR_SINGLETON_DEFINE(CLASS_NAME) \
     public: \
-        friend class QrCommon::QrSingleton<CLASS_NAME>; \
+        friend class Qters::QrCommon::QrSingleton<CLASS_NAME>; \
     public: \
         static CLASS_NAME* getInstance(); \
 
