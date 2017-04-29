@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-#include <QtCore/qsettings.h>
 #include <QTranslator>
 #include <qapplication.h>
 #include <QtCore/qdebug.h>
