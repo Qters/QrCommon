@@ -27,7 +27,7 @@ public:
 public:
 #ifdef Q_OS_MAC
     bool writePlist();
-    QString plistPath();
+    QString plistPath() const;
 #endif
 };
 
@@ -64,7 +64,7 @@ bool QrAutoRunPrivate::writePlist()
     return true;
 }
 
-QString QrAutoRunPrivate::plistPath()
+QString QrAutoRunPrivate::plistPath() const
 {
     return QString("%1/Library/LaunchAgents/%2.plist")
             .arg(QDir::homePath())
