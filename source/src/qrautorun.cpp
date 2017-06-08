@@ -6,7 +6,9 @@
 
 #ifdef Q_OS_WIN32
 #include <QtCore/qsettings.h>
-#elif Q_OS_MAC
+#endif
+
+#ifdef Q_OS_MAC
 #include <QtCore/qfile.h>
 #include <QtCore/qtextstream.h>
 #endif
@@ -24,7 +26,7 @@ public:
 
 public:
 #ifdef Q_OS_MAC
-    void writePlist();
+    bool writePlist();
     QString plistPath();
 #endif
 };
@@ -91,7 +93,9 @@ bool QrAutoRun::isAutoRun() const
 #ifdef Q_OS_WIN32
     QSettings reg(d->regKey, QSettings::NativeFormat);
     return reg.contains(d->appName);
-#elif Q_OS_MAC
+#endif
+
+#ifdef Q_OS_MAC
     return QFile::exists(d->plistPath());
 #endif
 
@@ -109,7 +113,9 @@ void QrAutoRun::autoRun(bool isAuto)
         registry.remove(d->appName);
     }
     registry.sync();
-#elif Q_OS_MAC
+#endif
+
+#ifdef Q_OS_MAC
     if(isAuto) {
         d->writePlist();
     } else {

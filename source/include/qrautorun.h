@@ -18,7 +18,8 @@ public:
 
 public:
     bool isAutoRun() const;
-    void autoRun(bool _auto);
+    void autoRun(bool isAuto);
+    void resetAppPath(const QString& path);
 };
 
 NS_QRCOMMON_END
