@@ -9,6 +9,10 @@ NS_QRCOMMON_BEGIN
 
 class QrAutoRunPrivate;
 
+/*!
+ * \brief The QrAutoRun class
+ * set application auto run or not when os start up
+ */
 class QRCOMMONSHARED_EXPORT QrAutoRun
 {
     QR_DECLARE_PRIVATE(QrAutoRun)
@@ -18,8 +22,18 @@ public:
 
 public:
     bool isAutoRun() const;
-    void autoRun(bool isAuto);
-    void resetAppPath(const QString& path);
+    /*!
+     * \brief autoRun
+     * \param isAuto    auto run or not
+     * \return
+     */
+    bool autoRun(bool isAuto);
+    /*!
+     * \brief resetRunApp
+     * default value is qApp->applicationFilePath()
+     * \param appPath
+     */
+    void resetRunApp(const QString& appPath);
 };
 
 NS_QRCOMMON_END

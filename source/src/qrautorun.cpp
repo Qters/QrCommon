@@ -18,7 +18,7 @@ NS_QRCOMMON_BEGIN
 class QrAutoRunPrivate{
 public:
     QString appName;
-    QString appPath;
+    QString pathOfRunApp;
 
 #ifdef Q_OS_WIN32
     const QString regKey = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run";
@@ -83,7 +83,7 @@ QrAutoRun::QrAutoRun(const QString& appName)
 {
     Q_D(QrAutoRun);
     d->appName = appName;
-    d->appPath = qApp->applicationFilePath();
+    d->pathOfRunApp = qApp->applicationFilePath();
 }
 
 bool QrAutoRun::isAutoRun() const
@@ -102,30 +102,34 @@ bool QrAutoRun::isAutoRun() const
     return false;
 }
 
-void QrAutoRun::autoRun(bool isAuto)
+bool QrAutoRun::autoRun(bool isAuto)
 {
     Q_D(QrAutoRun);
 #ifdef Q_OS_WIN32
     QSettings registry(d->regKey, QSettings::NativeFormat);
     if(isAuto) {
-        registry.setValue(d->appName, QDir::toNativeSeparators(d->appPath));
+        registry.setValue(d->appName, QDir::toNativeSeparators(d->pathOfRunApp));
     } else {
         registry.remove(d->appName);
     }
     registry.sync();
+    return true;
 #endif
 
 #ifdef Q_OS_MAC
     if(isAuto) {
-        d->writePlist();
+        return d->writePlist();
     } else {
         QFile::remove(d->plistPath());
     }
+    return true;
 #endif
+
+    return false;
 }
 
-void QrAutoRun::resetAppPath(const QString &path)
+void QrAutoRun::resetRunApp(const QString &appPath)
 {
     Q_D(QrAutoRun);
-    d->appPath = path;
+    d->pathOfRunApp = appPath;
 }
