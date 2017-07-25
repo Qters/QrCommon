@@ -3,7 +3,7 @@
 
 #include "qrtestsuitefactory.h"
 
-class TESTSUITE(tst_ispointer) tst_ispointer : public QObject
+class TESTSUITE(tst_ispointer) : public QObject
 {
     Q_OBJECT
 private slots:
