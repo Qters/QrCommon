@@ -3,7 +3,7 @@
 
 #include "qrtestsuitefactory.h"
 
-class TESTSUITE(tst_converter) tst_converter : public QObject
+class TESTSUITE(tst_converter) : public QObject
 {
     Q_OBJECT
 private slots:

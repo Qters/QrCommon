@@ -16,7 +16,7 @@
     } \
 
 
-class TESTSUITE(tst_Singleton) tst_Singleton : public QObject
+class TESTSUITE(tst_Singleton) : public QObject
 {
     Q_OBJECT
 private slots:
