@@ -27,6 +27,8 @@ NS_QRCOMMON_BEGIN
  *
  * #include "qrthreadpool.h"
  *
+ * USING_NS_QRCOMMON;
+ *
  * int main()
  * {
  *     QrThreadPool pool(4);
@@ -50,6 +52,7 @@ NS_QRCOMMON_BEGIN
  *     return 0;
  * }
  *
+ *
  * int main()
  * {
  *     QrThreadPool pool(4);
@@ -59,8 +62,10 @@ NS_QRCOMMON_BEGIN
  *             qDebug() << "hello " << i;
  *             std::this_thread::sleep_for(std::chrono::seconds(1));
  *             qDebug() << "world " << i;
- *         }, [i](){
- *         qDebug() << "hello world " << i << " finish";
+ *             return (void *)(i*i);
+ *         }, [i](void * data){
+ *             int result = int(data);
+ *             qDebug() << "hello world " << i << " finish, result is: " << result;
  *         });
  *     }
  *
@@ -78,9 +83,9 @@ public:
     auto enqueue(F&& f, Args&&... args)
         -> std::future<typename std::result_of<F(Args...)>::type>;
 
-    //  asyc enqueue, no retrun, result should embbed in lambda param or your mananger class
-    void enqueue_asyc(std::function<void ()> task, std::function<void ()> callback);
-    void notify_callback(long taskid);
+    //  asyc enqueue, result pass as void *
+    void enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback);
+    void notify_callback(long taskid, void *data);
 
 private:
     // need to keep track of threads so we can join them
@@ -90,7 +95,7 @@ private:
     //  task's callback
     long taskid = 0;
     long callbacklimit = 1;
-    std::map<long, std::function<void()> > callbacks;
+    std::map<long, std::function<void (void *)> > callbacks;
 
     // synchronization
     std::mutex queue_mutex;

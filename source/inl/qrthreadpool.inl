@@ -61,7 +61,7 @@ auto QrThreadPool::enqueue(F&& f, Args&&... args)
     return res;
 }
 
-void QrThreadPool::enqueue_asyc(std::function<void ()> task, std::function<void ()> callback)
+void QrThreadPool::enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback)
 {
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
@@ -74,8 +74,8 @@ void QrThreadPool::enqueue_asyc(std::function<void ()> task, std::function<void 
         callbacks[taskid] = callback;
         int cur_taskid = taskid;
         tasks.emplace([this, task, cur_taskid](){
-            task();
-            notify_callback(cur_taskid);
+            auto data = task();
+            notify_callback(cur_taskid, (void *)(data));
         });
 
         {
@@ -88,7 +88,7 @@ void QrThreadPool::enqueue_asyc(std::function<void ()> task, std::function<void 
     condition.notify_one();
 }
 
-void QrThreadPool::notify_callback(long taskid)
+void QrThreadPool::notify_callback(long taskid, void *data)
 {
     {
         std::unique_lock<std::mutex> lock(taskid_mutex);
@@ -97,7 +97,7 @@ void QrThreadPool::notify_callback(long taskid)
         }
     }
 
-    callbacks[taskid]();
+    callbacks[taskid](data);
 }
 
 // the destructor joins all threads
