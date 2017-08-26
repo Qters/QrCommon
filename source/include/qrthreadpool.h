@@ -73,7 +73,7 @@ NS_QRCOMMON_BEGIN
  * }
  *
  */
-class QrThreadPool {
+class QRCOMMONSHARED_EXPORT QrThreadPool {
 public:
     QrThreadPool(size_t);
     ~QrThreadPool();
@@ -104,8 +104,8 @@ private:
     bool stop;
 };
 
-NS_QRCOMMON_END
-
 #include "qrthreadpool.inl"
+
+NS_QRCOMMON_END
 
 #endif // QRTHREADPOOL_H
