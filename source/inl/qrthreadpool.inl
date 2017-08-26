@@ -101,6 +101,7 @@ void QrThreadPool::notify_callback(long taskid)
     }
 
     (*callbacks[taskid])();
+    callbacks.remove(taskid);
 }
 
 // the destructor joins all threads
