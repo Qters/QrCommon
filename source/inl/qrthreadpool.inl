@@ -61,7 +61,7 @@ auto QrThreadPool::enqueue(F&& f, Args&&... args)
     return res;
 }
 
-void QrThreadPool::enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback)
+inline void QrThreadPool::enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback)
 {
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
@@ -88,7 +88,7 @@ void QrThreadPool::enqueue_asyc(std::function<void * ()> task, std::function<voi
     condition.notify_one();
 }
 
-void QrThreadPool::notify_callback(long taskid, void *data)
+inline void QrThreadPool::notify_callback(long taskid, void *data)
 {
     {
         std::unique_lock<std::mutex> lock(taskid_mutex);
