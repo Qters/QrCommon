@@ -11,7 +11,6 @@
 #include <functional>
 #include <stdexcept>
 #include <map>
-#include <limits>
 
 #include "qrcommon_global.h"
 
@@ -51,16 +50,35 @@ NS_QRCOMMON_BEGIN
  *     return 0;
  * }
  *
+ * int main()
+ * {
+ *     QrThreadPool pool(4);
+ *     std::vector< std::future<int> > results;
+ *     for(int i = 0; i < 8; ++i) {
+ *         pool.enqueue_asyc([i](){
+ *             qDebug() << "hello " << i;
+ *             std::this_thread::sleep_for(std::chrono::seconds(1));
+ *             qDebug() << "world " << i;
+ *         }, [i](){
+ *         qDebug() << "hello world " << i << " finish";
+ *         });
+ *     }
+ *
+ *     return 0;
+ * }
+ *
  */
 class QrThreadPool {
 public:
     QrThreadPool(size_t);
     ~QrThreadPool();
 
+    //  sync enqueue, result get from future
     template<class F, class... Args>
     auto enqueue(F&& f, Args&&... args)
         -> std::future<typename std::result_of<F(Args...)>::type>;
 
+    //  asyc enqueue, no retrun, result should embbed in lambda param or your mananger class
     void enqueue_asyc(std::function<void ()> task, std::function<void ()> callback);
     void notify_callback(long taskid);
 
@@ -71,6 +89,7 @@ private:
     std::queue< std::function<void()> > tasks;
     //  task's callback
     long taskid = 0;
+    long callbacklimit = 1;
     std::map<long, std::function<void()> > callbacks;
 
     // synchronization

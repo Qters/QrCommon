@@ -9,6 +9,7 @@ USING_NS_QRCOMMON;
 inline QrThreadPool::QrThreadPool(size_t threads)
     :   stop(false)
 {
+    callbacklimit = threads * 2;
     for(size_t i = 0;i<threads;++i)
         workers.emplace_back(
             [this]
@@ -60,7 +61,7 @@ auto QrThreadPool::enqueue(F&& f, Args&&... args)
     return res;
 }
 
-void QrThreadPool::enqueue(std::function<void ()> task, std::function<void ()> callback)
+void QrThreadPool::enqueue_asyc(std::function<void ()> task, std::function<void ()> callback)
 {
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
@@ -70,20 +71,16 @@ void QrThreadPool::enqueue(std::function<void ()> task, std::function<void ()> c
             throw std::runtime_error("enqueue on stopped threadpool");
         }
 
-        {
-            std::unique_lock<std::mutex> lock(taskid_mutex);
-            ++taskid;
-        }
-
         callbacks[taskid] = callback;
-        tasks.emplace([task, taskid, callback](){
-            (*task)();
-            notify_callback(taskid);
+        int cur_taskid = taskid;
+        tasks.emplace([this, task, cur_taskid](){
+            task();
+            notify_callback(cur_taskid);
         });
 
         {
             std::unique_lock<std::mutex> lock(taskid_mutex);
-            if(taskid >= numeric_limits<long>::max) {
+            if(++taskid > callbacklimit) {
                 taskid = 0;
             }
         }
@@ -100,8 +97,7 @@ void QrThreadPool::notify_callback(long taskid)
         }
     }
 
-    (*callbacks[taskid])();
-    callbacks.remove(taskid);
+    callbacks[taskid]();
 }
 
 // the destructor joins all threads
