@@ -10,6 +10,8 @@
 #include <future>
 #include <functional>
 #include <stdexcept>
+#include <map>
+#include <limits>
 
 #include "qrcommon_global.h"
 
@@ -59,14 +61,21 @@ public:
     auto enqueue(F&& f, Args&&... args)
         -> std::future<typename std::result_of<F(Args...)>::type>;
 
+    void enqueue_asyc(std::function<void ()> task, std::function<void ()> callback);
+    void notify_callback(long taskid);
+
 private:
     // need to keep track of threads so we can join them
     std::vector< std::thread > workers;
     // the task queue
     std::queue< std::function<void()> > tasks;
+    //  task's callback
+    long taskid = 0;
+    std::map<long, std::function<void()> > callbacks;
 
     // synchronization
     std::mutex queue_mutex;
+    std::mutex taskid_mutex;
     std::condition_variable condition;
     bool stop;
 };

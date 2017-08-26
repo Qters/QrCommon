@@ -21,8 +21,9 @@ inline QrThreadPool::QrThreadPool(size_t threads)
                         std::unique_lock<std::mutex> lock(this->queue_mutex);
                         this->condition.wait(lock,
                             [this]{ return this->stop || !this->tasks.empty(); });
-                        if(this->stop && this->tasks.empty())
+                        if(this->stop && this->tasks.empty()){
                             return;
+                        }
                         task = std::move(this->tasks.front());
                         this->tasks.pop();
                     }
@@ -49,13 +50,57 @@ auto QrThreadPool::enqueue(F&& f, Args&&... args)
         std::unique_lock<std::mutex> lock(queue_mutex);
 
         // don't allow enqueueing after stopping the pool
-        if(stop)
+        if(stop){
             throw std::runtime_error("enqueue on stopped threadpool");
+        }
 
         tasks.emplace([task](){ (*task)(); });
     }
     condition.notify_one();
     return res;
+}
+
+void QrThreadPool::enqueue(std::function<void ()> task, std::function<void ()> callback)
+{
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+
+        // don't allow enqueueing after stopping the pool
+        if(stop){
+            throw std::runtime_error("enqueue on stopped threadpool");
+        }
+
+        {
+            std::unique_lock<std::mutex> lock(taskid_mutex);
+            ++taskid;
+        }
+
+        callbacks[taskid] = callback;
+        tasks.emplace([task, taskid, callback](){
+            (*task)();
+            notify_callback(taskid);
+        });
+
+        {
+            std::unique_lock<std::mutex> lock(taskid_mutex);
+            if(taskid >= numeric_limits<long>::max) {
+                taskid = 0;
+            }
+        }
+    }
+    condition.notify_one();
+}
+
+void QrThreadPool::notify_callback(long taskid)
+{
+    {
+        std::unique_lock<std::mutex> lock(taskid_mutex);
+        if(callbacks.end() == callbacks.find(taskid)) {
+            return;
+        }
+    }
+
+    (*callbacks[taskid])();
 }
 
 // the destructor joins all threads
@@ -66,8 +111,9 @@ inline QrThreadPool::~QrThreadPool()
         stop = true;
     }
     condition.notify_all();
-    for(std::thread &worker: workers)
+    for(std::thread &worker: workers){
         worker.join();
+    }
 }
 
 #endif  //  QRTHREADPOOL_INL
