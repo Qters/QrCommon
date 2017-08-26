@@ -1,17 +1,9 @@
-#ifndef QRTHREADPOOL_H
+﻿#ifndef QRTHREADPOOL_H
 #define QRTHREADPOOL_H
 
-#include <vector>
-#include <queue>
-#include <memory>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <future>
 #include <functional>
-#include <stdexcept>
-#include <map>
 
+#include "qrglobal.h"
 #include "qrcommon_global.h"
 
 NS_QRCOMMON_BEGIN
@@ -23,6 +15,7 @@ NS_QRCOMMON_BEGIN
  *
  * #include <iostream>
  * #include <vector>
+ * #include <thread>
  * #include <chrono>
  *
  * #include "qrthreadpool.h"
@@ -56,7 +49,6 @@ NS_QRCOMMON_BEGIN
  * int main()
  * {
  *     QrThreadPool pool(4);
- *     std::vector< std::future<int> > results;
  *     for(int i = 0; i < 8; ++i) {
  *         pool.enqueue_asyc([i](){
  *             qDebug() << "hello " << i;
@@ -73,38 +65,19 @@ NS_QRCOMMON_BEGIN
  * }
  *
  */
+class QrThreadPoolPrivate;
 class QRCOMMONSHARED_EXPORT QrThreadPool {
+    QR_DECLARE_PRIVATE(QrThreadPool)
+
 public:
     QrThreadPool(size_t);
     ~QrThreadPool();
 
-    //  sync enqueue, result get from future
-    template<class F, class... Args>
-    auto enqueue(F&& f, Args&&... args)
-        -> std::future<typename std::result_of<F(Args...)>::type>;
-
+public:
     //  asyc enqueue, result pass as void *
+    void enqueue_asy(std::function<void ()> task);
     void enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback);
-    void notify_callback(long taskid, void *data);
-
-private:
-    // need to keep track of threads so we can join them
-    std::vector< std::thread > workers;
-    // the task queue
-    std::queue< std::function<void()> > tasks;
-    //  task's callback
-    long taskid = 0;
-    long callbacklimit = 1;
-    std::map<long, std::function<void (void *)> > callbacks;
-
-    // synchronization
-    std::mutex queue_mutex;
-    std::mutex taskid_mutex;
-    std::condition_variable condition;
-    bool stop;
 };
-
-#include "qrthreadpool.inl"
 
 NS_QRCOMMON_END
 
