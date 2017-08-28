@@ -7,6 +7,12 @@
 #include "qrglobal.h"
 #include "singleton/qrsingleton.h"
 
+/*!
+ *  Using Qt languager mechanism
+ *
+ * demo is in qrtranslator.h
+ */
+
 NS_QRCOMMON_BEGIN
 
 class QRCOMMONSHARED_EXPORT QrLanguagData {

@@ -15,10 +15,12 @@ public:
 
 /*!
   DEMO:
+
     class SomeWidget : public QWidget, QrTranslator {
         LANGUAGE_CHANGE_FUNC
 
     public:
+        //  translate this widget's language
         virtual void retranslate() {
             label.setText(tr(""));
         }

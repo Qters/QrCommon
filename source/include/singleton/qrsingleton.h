@@ -16,7 +16,7 @@ NS_QRCOMMON_BEGIN
  *
  * example:
  * in classname.h:
- * #include "singleton/singleton.h"
+ * #include "singleton/qrsingleton.h"
  * class ClassName : public QrCommon::QrSingleton<ClassName>
  * {
  *  QR_SINGLETON_DEFINE(ClassName)
