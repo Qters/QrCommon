@@ -8,9 +8,15 @@
 #include "qrcommon_global.h"
 #include "singleton/qrsingleton.h"
 
-#define QrLngTR(key,_comment) (QrCustomLanguagerManager::getInstance()->getValue(QString(key), QString(_comment)))
-#define QrLngReg(_this) (QrCustomLanguagerManager::getInstance()->regLanguageChangeListener(_this))
-#define QrLngUnReg(_this) (QrCustomLanguagerManager::getInstance()->unRegLanguageChangeListener(_this))
+#define QrLngTR(key,_comment) \
+    ::Qters::QrCommon::QrCustomLanguagerManager::getInstance()->getValue(QString(key), QString(_comment)) \
+
+#define QrLngReg(_this) \
+    ::Qters::QrCommon::QrCustomLanguagerManager::getInstance()->regLanguageChangeListener(_this); \
+    _this->onLanguageChange() \
+
+#define QrLngUnReg(_this) \
+    ::Qters::QrCommon::QrCustomLanguagerManager::getInstance()->unRegLanguageChangeListener(_this) \
 
 
 NS_QRCOMMON_BEGIN
