@@ -2,54 +2,28 @@
 
 #include <fstream>
 
-USING_NS_QRCOMMON;
+#include <QtCore/qmap.h>
 
-QrCustomLanguageDicter::QrCustomLanguageDicter(const std::string &filePath)
-    : filePath(filePath.c_str())
-{
-}
+NS_QRCOMMON_BEGIN
 
-QrCustomLanguageDicter::~QrCustomLanguageDicter()
-{
-    dict.clear();
-}
+class QrCustomLanguageDicterPrivate {
+    QR_DECLARE_PUBLIC(QrCustomLanguageDicter)
 
-QrCustomLanguageDicter* QrCustomLanguageDicter::reload()
-{
-    isLoad = false;
-    dict.clear();
-    load();
+public:
+    QrCustomLanguageDicterPrivate(QrCustomLanguageDicter *q, const QString &filePath)
+    : q_ptr(q),
+      filePath(filePath) {}
 
-    return this;
-}
+public:
+    void parserLine(const QString &line);
 
-QrCustomLanguageDicter* QrCustomLanguageDicter::load()
-{
-    std::wifstream fin(filePath.c_str());
+public:
+    QString filePath;
+    bool isLoad = false;
+    QMap<QString, QString> dict;
+};
 
-    wchar_t wcharArr[1024] ={0};
-    while(fin.is_open() && !fin.eof()) {
-        fin.getline(wcharArr,1024);
-        parserLine(QString::fromUtf8(QString::fromWCharArray(wcharArr).toLatin1()));
-    }
-    fin.close();
-
-    return this;
-}
-
-QString QrCustomLanguageDicter::getValue(const QString &key, const QString& defaultValue)
-{
-    if(dict.find(key) != dict.end()) {
-        QString value = dict[key];
-        if(value.isEmpty() && ! defaultValue.isEmpty()) {
-            return defaultValue;
-        }
-        return value;
-    }
-    return defaultValue;
-}
-
-void QrCustomLanguageDicter::parserLine(const QString &line)
+void QrCustomLanguageDicterPrivate::parserLine(const QString &line)
 {
     QChar f1('/');
     QChar f2('#');
@@ -78,3 +52,61 @@ void QrCustomLanguageDicter::parserLine(const QString &line)
     }
 }
 
+
+
+NS_QRCOMMON_END
+
+USING_NS_QRCOMMON;
+
+QrCustomLanguageDicter::QrCustomLanguageDicter(const QString &filePath)
+    : d_ptr(new QrCustomLanguageDicterPrivate(this, filePath))
+{
+}
+
+QrCustomLanguageDicter::~QrCustomLanguageDicter()
+{
+    Q_D(QrCustomLanguageDicter);
+    d->dict.clear();
+}
+
+QrCustomLanguageDicter* QrCustomLanguageDicter::reload()
+{
+    Q_D(QrCustomLanguageDicter);
+
+    d->isLoad = false;
+    d->dict.clear();
+
+    load();
+
+    return this;
+}
+
+QrCustomLanguageDicter* QrCustomLanguageDicter::load()
+{
+    Q_D(QrCustomLanguageDicter);
+
+    std::wifstream fin(d->filePath.toStdString().c_str());
+
+    wchar_t wcharArr[1024] ={0};
+    while(fin.is_open() && !fin.eof()) {
+        fin.getline(wcharArr,1024);
+        d->parserLine(QString::fromUtf8(QString::fromWCharArray(wcharArr).toLatin1()));
+    }
+    fin.close();
+
+    return this;
+}
+
+QString QrCustomLanguageDicter::getValue(const QString &key, const QString& defaultValue)
+{
+    Q_D(QrCustomLanguageDicter);
+
+    if(d->dict.find(key) != d->dict.end()) {
+        QString value = d->dict[key];
+        if(value.isEmpty() && ! defaultValue.isEmpty()) {
+            return defaultValue;
+        }
+        return value;
+    }
+    return defaultValue;
+}

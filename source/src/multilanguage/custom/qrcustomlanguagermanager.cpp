@@ -141,7 +141,7 @@ bool QrCustomLanguagerManager::loadLanguage(int index)
 
     if(d->languageDicts.find(index) == d->languageDicts.end()
             && d->dictResources.find(index) != d->dictResources.end()) {
-        QrCustomLanguageDicter *dicter = new QrCustomLanguageDicter(d->dictResources[index].toStdString());
+        QrCustomLanguageDicter *dicter = new QrCustomLanguageDicter(d->dictResources[index]);
         dicter->load();
         d->languageDicts[index] = dicter;
         return true;

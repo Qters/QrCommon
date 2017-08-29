@@ -6,28 +6,24 @@
 
 #include <QtCore/qstring.h>
 
+#include "qrglobal.h"
 #include "qrcommon_global.h"
 
 NS_QRCOMMON_BEGIN
 
+class QrCustomLanguageDicterPrivate;
 class QRCOMMONSHARED_EXPORT QrCustomLanguageDicter
 {
+    QR_DECLARE_PRIVATE(QrCustomLanguageDicter)
+
 public:
-    QrCustomLanguageDicter(const std::string &filePath);
+    QrCustomLanguageDicter(const QString &filePath);
     ~QrCustomLanguageDicter();
 
 public:
     QrCustomLanguageDicter* load();
     QrCustomLanguageDicter* reload();
     QString getValue(const QString &key, const QString& defaultValue);
-
-private:
-    void parserLine(const QString &line);
-
-private:
-    std::string filePath;
-    bool isLoad = false;
-    std::map<QString, QString> dict;
 };
 
 NS_QRCOMMON_END
