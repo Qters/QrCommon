@@ -31,6 +31,9 @@ public:
     QString relativePath;
     QVector<QrCustomLanguagerData> languageDatas;
 
+    bool useDecipherFunc = false;
+    std::function<QString(QString)> decipherFunc;
+
 public:
     std::list<ILanguageChangeListener*> listeners;
     std::map<int, QrCustomLanguageDicter*> languageDicts;
@@ -75,6 +78,13 @@ void QrCustomLanguagerManager::setRelativePathOfLanguageFiles(const QString &pat
 {
     Q_D(QrCustomLanguagerManager);
     d->relativePath = path;
+}
+
+void QrCustomLanguagerManager::setDecipherFunc(std::function<QString (QString)> func)
+{
+    Q_D(QrCustomLanguagerManager);
+    d->useDecipherFunc = true;
+    d->decipherFunc = func;
 }
 
 int QrCustomLanguagerManager::addLanguage(const QrCustomLanguagerData& data)
@@ -142,6 +152,9 @@ bool QrCustomLanguagerManager::loadLanguage(int index)
     if(d->languageDicts.find(index) == d->languageDicts.end()
             && d->dictResources.find(index) != d->dictResources.end()) {
         QrCustomLanguageDicter *dicter = new QrCustomLanguageDicter(d->dictResources[index]);
+        if(d->useDecipherFunc) {
+            dicter->setDecipherFunc(d->decipherFunc);
+        }
         dicter->load();
         d->languageDicts[index] = dicter;
         return true;

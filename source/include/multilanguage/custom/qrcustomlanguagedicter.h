@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <functional>
 
 #include <QtCore/qstring.h>
 
@@ -21,6 +22,7 @@ public:
     ~QrCustomLanguageDicter();
 
 public:
+    void setDecipherFunc(std::function<QString(QString)> func);
     QrCustomLanguageDicter* load();
     QrCustomLanguageDicter* reload();
     QString getValue(const QString &key, const QString& defaultValue);

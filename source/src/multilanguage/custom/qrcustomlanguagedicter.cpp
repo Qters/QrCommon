@@ -21,6 +21,9 @@ public:
     QString filePath;
     bool isLoad = false;
     QMap<QString, QString> dict;
+
+    bool useDecipherFunc = false;
+    std::function<QString(QString)> decipherFunc;
 };
 
 void QrCustomLanguageDicterPrivate::parserLine(const QString &line)
@@ -69,6 +72,13 @@ QrCustomLanguageDicter::~QrCustomLanguageDicter()
     d->dict.clear();
 }
 
+void QrCustomLanguageDicter::setDecipherFunc(std::function<QString (QString)> func)
+{
+    Q_D(QrCustomLanguageDicter);
+    d->useDecipherFunc = true;
+    d->decipherFunc = func;
+}
+
 QrCustomLanguageDicter* QrCustomLanguageDicter::reload()
 {
     Q_D(QrCustomLanguageDicter);
@@ -90,7 +100,11 @@ QrCustomLanguageDicter* QrCustomLanguageDicter::load()
     wchar_t wcharArr[1024] ={0};
     while(fin.is_open() && !fin.eof()) {
         fin.getline(wcharArr,1024);
-        d->parserLine(QString::fromUtf8(QString::fromWCharArray(wcharArr).toLatin1()));
+        QString lineContent = QString::fromUtf8(QString::fromWCharArray(wcharArr).toLatin1());
+        if(d->useDecipherFunc) {
+            lineContent = d->decipherFunc(lineContent);
+        }
+        d->parserLine(lineContent);
     }
     fin.close();
 

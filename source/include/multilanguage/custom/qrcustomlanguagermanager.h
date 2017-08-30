@@ -1,6 +1,8 @@
 ﻿#ifndef QRCUSTOMLANGUAGERMANAGER_H
 #define QRCUSTOMLANGUAGERMANAGER_H
 
+#include <functional>
+
 #include <QtCore/qlocale.h>
 
 #include "qrglobal.h"
@@ -54,6 +56,7 @@ public:
     int addLanguage(const QrCustomLanguagerData& data);
     bool switchLanguage(int index);
     void setRelativePathOfLanguageFiles(const QString& path);
+    void setDecipherFunc(std::function<QString(QString)> func);
 
     int size() const;
     QStringList displayNames() const;
