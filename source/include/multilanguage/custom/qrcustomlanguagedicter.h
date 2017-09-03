@@ -22,7 +22,7 @@ public:
     ~QrCustomLanguageDicter();
 
 public:
-    void setDecipherFunc(std::function<QString(QString)> func);
+    void setDecipherFunc(std::function<QString(QByteArray)> func);
     QrCustomLanguageDicter* load();
     QrCustomLanguageDicter* reload();
     QString getValue(const QString &key, const QString& defaultValue);

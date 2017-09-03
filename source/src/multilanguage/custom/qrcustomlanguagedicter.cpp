@@ -1,7 +1,6 @@
 ﻿#include "custom/qrcustomlanguagedicter.h"
 
-#include <fstream>
-
+#include <QtCore/qfile.h>
 #include <QtCore/qmap.h>
 
 NS_QRCOMMON_BEGIN
@@ -15,7 +14,7 @@ public:
       filePath(filePath) {}
 
 public:
-    void parserLine(const QString &line);
+    void parserOne(const QString &line);
 
 public:
     QString filePath;
@@ -23,16 +22,15 @@ public:
     QMap<QString, QString> dict;
 
     bool useDecipherFunc = false;
-    std::function<QString(QString)> decipherFunc;
+    std::function<QString(QByteArray)> decipherFunc;
 };
 
-void QrCustomLanguageDicterPrivate::parserLine(const QString &line)
+void QrCustomLanguageDicterPrivate::parserOne(const QString &line)
 {
     QChar f1('/');
     QChar f2('#');
     QChar f3('=');
     QChar f4('"');
-    QString f5("\";");
 
     QString lineCopy = line.trimmed();
 
@@ -47,9 +45,9 @@ void QrCustomLanguageDicterPrivate::parserLine(const QString &line)
         if(strKey.startsWith(f4)
                 &&strKey.endsWith(f4)
                 &&strValue.startsWith(f4)
-                &&strValue.endsWith(f5)) {
+                &&strValue.endsWith(f4)) {
             QString strMapKey = strKey.mid(1,strKey.size() - 2);
-            QString strMapValue = strValue.mid(1,strValue.size() - 3);
+            QString strMapValue = strValue.mid(1,strValue.size() - 2);
             dict[strMapKey] = strMapValue;
         }
     }
@@ -72,7 +70,7 @@ QrCustomLanguageDicter::~QrCustomLanguageDicter()
     d->dict.clear();
 }
 
-void QrCustomLanguageDicter::setDecipherFunc(std::function<QString (QString)> func)
+void QrCustomLanguageDicter::setDecipherFunc(std::function<QString (QByteArray)> func)
 {
     Q_D(QrCustomLanguageDicter);
     d->useDecipherFunc = true;
@@ -95,18 +93,24 @@ QrCustomLanguageDicter* QrCustomLanguageDicter::load()
 {
     Q_D(QrCustomLanguageDicter);
 
-    std::wifstream fin(d->filePath.toStdString().c_str());
-
-    wchar_t wcharArr[1024] ={0};
-    while(fin.is_open() && !fin.eof()) {
-        fin.getline(wcharArr,1024);
-        QString lineContent = QString::fromUtf8(QString::fromWCharArray(wcharArr).toLatin1());
-        if(d->useDecipherFunc) {
-            lineContent = d->decipherFunc(lineContent);
-        }
-        d->parserLine(lineContent);
+    QFile readFile(d->filePath);
+    if(! readFile.open(QIODevice::ReadOnly)) {
+        return this;
     }
-    fin.close();
+
+    QString fileContent;
+    auto rawContent = readFile.readAll();
+    readFile.close();
+
+    if(d->useDecipherFunc) {
+        fileContent = d->decipherFunc(rawContent);
+    } else {
+        fileContent = rawContent;
+    }
+
+    Q_FOREACH(QString one, fileContent.split(";")) {
+        d->parserOne(one);
+    }
 
     return this;
 }

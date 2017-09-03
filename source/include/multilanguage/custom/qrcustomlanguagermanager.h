@@ -56,7 +56,7 @@ public:
     int addLanguage(const QrCustomLanguagerData& data);
     bool switchLanguage(int index);
     void setRelativePathOfLanguageFiles(const QString& path);
-    void setDecipherFunc(std::function<QString(QString)> func);
+    void setDecipherFunc(std::function<QString(QByteArray)> func);
 
     int size() const;
     QStringList displayNames() const;

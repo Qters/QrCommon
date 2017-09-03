@@ -32,7 +32,7 @@ public:
     QVector<QrCustomLanguagerData> languageDatas;
 
     bool useDecipherFunc = false;
-    std::function<QString(QString)> decipherFunc;
+    std::function<QString(QByteArray)> decipherFunc;
 
 public:
     std::list<ILanguageChangeListener*> listeners;
@@ -80,7 +80,7 @@ void QrCustomLanguagerManager::setRelativePathOfLanguageFiles(const QString &pat
     d->relativePath = path;
 }
 
-void QrCustomLanguagerManager::setDecipherFunc(std::function<QString (QString)> func)
+void QrCustomLanguagerManager::setDecipherFunc(std::function<QString (QByteArray)> func)
 {
     Q_D(QrCustomLanguagerManager);
     d->useDecipherFunc = true;
