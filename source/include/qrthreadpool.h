@@ -25,38 +25,17 @@ NS_QRCOMMON_BEGIN
  * int main()
  * {
  *     QrThreadPool pool(4);
- *     std::vector< std::future<int> > results;
- *
- *     for(int i = 0; i < 8; ++i) {
- *         results.emplace_back(
- *             pool.enqueue([i] {
- *                 std::cout << "hello " << i << std::endl;
- *                 std::this_thread::sleep_for(std::chrono::seconds(1));
- *                 std::cout << "world " << i << std::endl;
- *                 return i*i;
- *             })
- *         );
- *     }
- *
- *     for(auto && result: results)
- *         std::cout << result.get() << ' ';
- *     std::cout << std::endl;
- *
- *     return 0;
- * }
- *
- *
- * int main()
- * {
- *     QrThreadPool pool(4);
  *     for(int i = 0; i < 8; ++i) {
  *         pool.enqueue_asyc([i](){
  *             qDebug() << "hello " << i;
  *             std::this_thread::sleep_for(std::chrono::seconds(1));
  *             qDebug() << "world " << i;
- *             return (void *)(i*i);
- *         }, [i](void * data){
- *             int result = int(data);
+ *
+ *             QVariant result;
+ *             result.setValue(i*i);
+ *             return result;
+ *         }, [i](QVariant data){
+ *             int result = data.value<int>();
  *             qDebug() << "hello world " << i << " finish, result is: " << result;
  *         });
  *     }
@@ -76,7 +55,7 @@ public:
 public:
     //  asyc enqueue, result pass as void *
     void enqueue_asy(std::function<void ()> task);
-    void enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback);
+    void enqueue_asyc(std::function<QVariant ()> task, std::function<void (QVariant)> callback);
 };
 
 NS_QRCOMMON_END

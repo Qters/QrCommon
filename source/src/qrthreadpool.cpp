@@ -1,5 +1,7 @@
 ﻿#include "qrthreadpool.h"
 
+#include <QtCore/qvariant.h>
+
 #include <vector>
 #include <queue>
 #include <memory>
@@ -19,7 +21,7 @@ public:
     QrThreadPoolPrivate(QrThreadPool* q);
 
 public:
-    void notify_callback(long callback_taskid, void *data);
+    void notify_callback(long callback_taskid, QVariant data);
 
 public:
     // need to keep track of threads so we can join them
@@ -29,7 +31,7 @@ public:
     //  task's callback
     long taskid = 0;
     long callbacklimit = 1;
-    std::map<long, std::function<void (void *)> > callbacks;
+    std::map<long, std::function<void (QVariant)> > callbacks;
 
     // synchronization
     std::mutex queue_mutex;
@@ -43,7 +45,7 @@ QrThreadPoolPrivate::QrThreadPoolPrivate(QrThreadPool *q)
       q_ptr(q)
 {}
 
-void QrThreadPoolPrivate::notify_callback(long callback_taskid, void *data)
+void QrThreadPoolPrivate::notify_callback(long callback_taskid, QVariant data)
 {
     {
         std::unique_lock<std::mutex> lock(taskid_mutex);
@@ -112,10 +114,17 @@ QrThreadPool::~QrThreadPool()
 
 void Qters::QrCommon::QrThreadPool::enqueue_asy(std::function<void ()> task)
 {
-    enqueue_asyc([task](){ task(); return (void *)(1);}, [](void * data){Q_UNUSED(data)});
+    enqueue_asyc([task](){
+        task();
+        QVariant result;
+        result.setValue(1);
+        return result;
+    }, [](QVariant data){
+        Q_UNUSED(data)
+    });
 }
 
-void QrThreadPool::enqueue_asyc(std::function<void * ()> task, std::function<void (void *)> callback)
+void QrThreadPool::enqueue_asyc(std::function<QVariant ()> task, std::function<void (QVariant)> callback)
 {
     Q_D(QrThreadPool);
     {
@@ -129,9 +138,8 @@ void QrThreadPool::enqueue_asyc(std::function<void * ()> task, std::function<voi
         d->callbacks[d->taskid] = callback;
         int cur_taskid = d->taskid;
         d->tasks.emplace([this, task, cur_taskid](){
-            auto data = task();
             Q_D(QrThreadPool);
-            d->notify_callback(cur_taskid, (void *)(data));
+            d->notify_callback(cur_taskid, task());
         });
 
         {
